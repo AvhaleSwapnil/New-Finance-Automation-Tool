@@ -3,10 +3,42 @@
 import { useState } from 'react';
 import { Zap, Plus, Play, Pause, Trash2, ArrowRight, ShieldAlert, Clock, Mail, ChevronDown } from 'lucide-react';
 import { mockData } from '@/lib/mockData';
+import { cn } from '@/lib/utils'; // Assuming cn utility is available
 
 export default function AutomationPage() {
     const [rules, setRules] = useState(mockData.automationRules);
     const [showForm, setShowForm] = useState(false);
+
+    // Form state
+    const [ifValue, setIfValue] = useState('Invoice is Overdue');
+    const [daysValue, setDaysValue] = useState('10');
+    const [thenValue, setThenValue] = useState('Send Email Reminder');
+    const [message, setMessage] = useState('');
+
+    const handleAddRule = (e) => {
+        e.preventDefault();
+        const newRule = {
+            id: `rule-${Date.now()}`,
+            name: thenValue,
+            condition: `${ifValue} by > ${daysValue} days`,
+            action: thenValue,
+            active: true
+        };
+        setRules([newRule, ...rules]);
+        setShowForm(false);
+        // Reset form
+        setMessage('');
+    };
+
+    const handleDeleteRule = (id) => {
+        setRules(rules.filter(rule => rule.id !== id));
+    };
+
+    const handleToggleRule = (id) => {
+        setRules(rules.map(rule =>
+            rule.id === id ? { ...rule, active: !rule.active } : rule
+        ));
+    };
 
     return (
         <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
@@ -20,7 +52,7 @@ export default function AutomationPage() {
                     className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                     <Plus className="w-4 h-4" />
-                    Create New Rule
+                    {showForm ? 'Cancel Builder' : 'Create New Rule'}
                 </button>
             </div>
 
@@ -28,7 +60,7 @@ export default function AutomationPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Rule Builder Form */}
                 <div className={`lg:col-span-4 space-y-6 transition-soft ${showForm ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}>
-                    <div className="bg-white rounded-2xl border border-[#f2f4f7] p-6 card-shadow">
+                    <form onSubmit={handleAddRule} className="bg-white rounded-2xl border border-[#f2f4f7] p-6 card-shadow">
                         <h3 className="text-lg font-bold text-[#101828] mb-6">Rule Builder</h3>
 
                         <div className="space-y-6">
@@ -36,7 +68,11 @@ export default function AutomationPage() {
                                 <label className="block text-sm font-medium text-[#344054] mb-2">If This Happens</label>
                                 <div className="space-y-3">
                                     <div className="relative">
-                                        <select className="w-full bg-white border border-[#d0d5dd] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none appearance-none">
+                                        <select
+                                            value={ifValue}
+                                            onChange={(e) => setIfValue(e.target.value)}
+                                            className="w-full bg-white border border-[#d0d5dd] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none appearance-none"
+                                        >
                                             <option>Invoice is Overdue</option>
                                             <option>Revenue drops below threshold</option>
                                             <option>High value invoice created</option>
@@ -45,7 +81,12 @@ export default function AutomationPage() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-xs text-[#667085]">by more than</span>
-                                        <input type="number" defaultValue="10" className="w-20 bg-white border border-[#d0d5dd] rounded-lg px-3 py-1.5 text-sm font-bold outline-none" />
+                                        <input
+                                            type="number"
+                                            value={daysValue}
+                                            onChange={(e) => setDaysValue(e.target.value)}
+                                            className="w-20 bg-white border border-[#d0d5dd] rounded-lg px-3 py-1.5 text-sm font-bold outline-none"
+                                        />
                                         <span className="text-xs text-[#667085]">days</span>
                                     </div>
                                 </div>
@@ -60,7 +101,11 @@ export default function AutomationPage() {
                             <div>
                                 <label className="block text-sm font-medium text-[#344054] mb-2">Then Do This</label>
                                 <div className="relative mb-3">
-                                    <select className="w-full bg-white border border-[#d0d5dd] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none appearance-none">
+                                    <select
+                                        value={thenValue}
+                                        onChange={(e) => setThenValue(e.target.value)}
+                                        className="w-full bg-white border border-[#d0d5dd] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none appearance-none"
+                                    >
                                         <option>Send Email Reminder</option>
                                         <option>Show Dashboard Alert</option>
                                         <option>Notify Admin</option>
@@ -69,15 +114,21 @@ export default function AutomationPage() {
                                 </div>
                                 <textarea
                                     placeholder="Custom message (optional)..."
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
                                     className="w-full bg-white border border-[#d0d5dd] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none h-24 resize-none"
                                 ></textarea>
                             </div>
 
-                            <button className="w-full py-2.5 bg-[#101828] text-white rounded-lg font-bold hover:bg-black transition-soft">
+                            <button
+                                type="submit"
+                                disabled={!showForm}
+                                className="w-full py-2.5 bg-[#101828] text-white rounded-lg font-bold hover:bg-black transition-soft disabled:opacity-50"
+                            >
                                 Save & Activate Rule
                             </button>
                         </div>
-                    </div>
+                    </form>
 
                     <div className="bg-[#eff6ff] border border-[#dbeafe] rounded-xl p-4 flex gap-3">
                         <ShieldAlert className="w-5 h-5 text-[#2563eb] flex-shrink-0" />
@@ -98,7 +149,10 @@ export default function AutomationPage() {
                         {rules.map((rule) => (
                             <div
                                 key={rule.id}
-                                className="bg-white rounded-xl p-4 border border-[#f2f4f7] card-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:border-[#2563eb]/20 transition-soft"
+                                className={cn(
+                                    "bg-white rounded-xl p-4 border border-[#f2f4f7] card-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:border-[#2563eb]/20 transition-soft",
+                                    !rule.active && "opacity-60 grayscale-[0.5]"
+                                )}
                             >
                                 <div className="flex items-start sm:items-center gap-3 sm:gap-4">
                                     <div className="w-10 h-10 bg-[#f9fafb] border border-[#f2f4f7] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -109,7 +163,12 @@ export default function AutomationPage() {
                                     <div className="min-w-0">
                                         <div className="flex flex-wrap items-center gap-2 mb-0.5">
                                             <h4 className="font-bold text-sm text-[#101828] truncate">{rule.name}</h4>
-                                            <span className="text-[10px] px-2 py-0.5 bg-[#ecfdf5] text-[#059669] rounded-full font-bold uppercase whitespace-nowrap">Active</span>
+                                            <span className={cn(
+                                                "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase whitespace-nowrap",
+                                                rule.active ? "bg-[#ecfdf5] text-[#059669]" : "bg-[#f2f4f7] text-[#667085]"
+                                            )}>
+                                                {rule.active ? 'Active' : 'Paused'}
+                                            </span>
                                         </div>
                                         <p className="text-xs text-[#667085] leading-relaxed">
                                             <span className="font-semibold uppercase text-[10px]">If:</span> {rule.condition}
@@ -121,18 +180,28 @@ export default function AutomationPage() {
                                 </div>
 
                                 <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-soft ml-auto sm:ml-0">
-
-                                    <button className="p-2 text-[#667085] hover:text-[#101828] hover:bg-[#f9fafb] rounded-lg">
-                                        <Pause className="w-4 h-4" />
+                                    <button
+                                        onClick={() => handleToggleRule(rule.id)}
+                                        className="p-2 text-[#667085] hover:text-[#101828] hover:bg-[#f9fafb] rounded-lg"
+                                        title={rule.active ? 'Pause Rule' : 'Resume Rule'}
+                                    >
+                                        {rule.active ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                                     </button>
-                                    <button className="p-2 text-[#667085] hover:text-red-600 hover:bg-red-50 rounded-lg">
+                                    <button
+                                        onClick={() => handleDeleteRule(rule.id)}
+                                        className="p-2 text-[#667085] hover:text-red-600 hover:bg-red-50 rounded-lg"
+                                        title="Delete Rule"
+                                    >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
                             </div>
                         ))}
 
-                        <button className="w-full py-8 border-2 border-dashed border-[#f2f4f7] rounded-xl flex flex-col items-center justify-center text-[#667085] hover:border-[#d0d5dd] hover:bg-[#f9fafb] transition-soft group">
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="w-full py-8 border-2 border-dashed border-[#f2f4f7] rounded-xl flex flex-col items-center justify-center text-[#667085] hover:border-[#d0d5dd] hover:bg-[#f9fafb] transition-soft group"
+                        >
                             <Plus className="w-6 h-6 mb-2 text-[#d0d5dd] group-hover:text-[#667085]" />
                             <span className="text-sm font-medium">Add another automation rule</span>
                         </button>

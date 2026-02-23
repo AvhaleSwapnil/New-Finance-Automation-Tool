@@ -7,6 +7,24 @@ import { cn } from '@/lib/utils';
 
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState('Company Profile');
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSync = () => {
+        setIsSyncing(true);
+        setTimeout(() => {
+            setIsSyncing(false);
+            alert("Settings synced with QuickBooks!");
+        }, 1500);
+    };
+
+    const handleSave = () => {
+        setIsSaving(true);
+        setTimeout(() => {
+            setIsSaving(false);
+            alert("All changes saved successfully.");
+        }, 1000);
+    };
 
     const navItems = [
         { icon: Building2, label: "Company Profile" },
@@ -59,9 +77,13 @@ export default function SettingsPage() {
                                     <p className="text-[10px] text-[#667085] font-bold uppercase tracking-wider">Connected since Jan 2024</p>
                                 </div>
                             </div>
-                            <button className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#d0d5dd] rounded-lg text-xs font-bold text-[#344054] transition-soft hover:bg-[#f9fafb] w-full sm:w-auto">
-                                <RefreshCw className="w-3 h-3 text-[#667085]" />
-                                Sync Now
+                            <button
+                                onClick={handleSync}
+                                disabled={isSyncing}
+                                className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#d0d5dd] rounded-lg text-xs font-bold text-[#344054] transition-soft hover:bg-[#f9fafb] w-full sm:w-auto disabled:opacity-50"
+                            >
+                                <RefreshCw className={cn("w-3 h-3 text-[#667085]", isSyncing && "animate-spin")} />
+                                {isSyncing ? 'Syncing...' : 'Sync Now'}
                             </button>
                         </div>
                     </section>
@@ -97,8 +119,12 @@ export default function SettingsPage() {
                         <button className="px-6 py-2.5 bg-white border border-[#d0d5dd] text-[#344054] rounded-xl font-bold text-sm transition-soft hover:bg-[#f9fafb] w-full sm:w-auto order-2 sm:order-1">
                             Cancel
                         </button>
-                        <button className="px-6 py-2.5 bg-[#101828] text-white rounded-xl font-bold text-sm transition-soft hover:bg-black w-full sm:w-auto order-1 sm:order-2">
-                            Save Changes
+                        <button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="px-6 py-2.5 bg-[#101828] text-white rounded-xl font-bold text-sm transition-soft hover:bg-black w-full sm:w-auto order-1 sm:order-2 disabled:opacity-50"
+                        >
+                            {isSaving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </div>
@@ -125,15 +151,19 @@ function ThresholdInput({ label, defaultValue, unit }) {
 }
 
 function ToggleSetting({ label, description, defaultChecked }) {
+    const [checked, setChecked] = useState(defaultChecked || false);
     return (
         <div className="flex items-center justify-between py-4 border-b border-[#f9fafb] last:border-0 group">
             <div className="space-y-0.5">
                 <span className="text-sm font-bold text-[#101828] group-hover:text-[#2563eb] transition-soft">{label}</span>
                 <p className="text-xs text-[#667085]">{description}</p>
             </div>
-            <div className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" defaultChecked={defaultChecked} className="sr-only peer" />
-                <div className="w-10 h-5 bg-[#f2f4f7] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#d0d5dd] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#101828]"></div>
+            <div className="relative inline-flex items-center cursor-pointer" onClick={() => setChecked(!checked)}>
+                <input type="checkbox" checked={checked} readOnly className="sr-only peer" />
+                <div className={cn(
+                    "w-10 h-5 bg-[#f2f4f7] rounded-full transition-all relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border border-[#d0d5dd] after:rounded-full after:h-4 after:w-4 after:transition-all",
+                    checked ? "bg-[#101828] after:translate-x-full after:border-white" : ""
+                )}></div>
             </div>
         </div>
     );

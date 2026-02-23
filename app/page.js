@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from 'react';
+import Link from 'next/link';
 import { mockData } from '@/lib/mockData';
 import { calculateNetProfit, calculateHealthScore, formatCurrency } from '@/lib/calculations';
 import KPICard from '@/components/dashboard/KPICard';
@@ -9,12 +13,27 @@ import {
   AlertCircle,
   DollarSign,
   ArrowUpRight,
-  Zap
+  Zap,
+  RefreshCw
 } from 'lucide-react';
 
 export default function Dashboard() {
   const { kpis, revenueExpensesHistory, alerts } = mockData;
   const netProfit = calculateNetProfit(kpis.totalRevenue, kpis.totalExpenses);
+
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSynced, setLastSynced] = useState("Today, 10:00 AM");
+
+  const handleSync = () => {
+    setIsSyncing(true);
+    // Simulate sync
+    setTimeout(() => {
+      setIsSyncing(false);
+      const now = new Date();
+      setLastSynced(`Today, ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`);
+      alert("Financial data synced with QuickBooks successfully!");
+    }, 2000);
+  };
 
   const revenueChange = ((kpis.totalRevenue - kpis.lastMonthRevenue) / kpis.lastMonthRevenue) * 100;
   const expensesChange = ((kpis.totalExpenses - kpis.lastMonthExpenses) / kpis.lastMonthExpenses) * 100;
@@ -27,10 +46,15 @@ export default function Dashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">Financial Overview</h1>
           <p className="text-[#667085] mt-1 text-sm sm:text-base">Real-time performance metrics from QuickBooks</p>
         </div>
-        <div className="flex items-center gap-3 bg-white p-2 sm:p-2 rounded-xl border border-[#f2f4f7] card-shadow w-fit">
-          <span className="text-[10px] sm:text-xs font-semibold text-[#667085] px-2">Last Synced: Today, 10:00 AM</span>
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        </div>
+        <button
+          onClick={handleSync}
+          disabled={isSyncing}
+          className="flex items-center gap-3 bg-white p-2 sm:p-2.5 rounded-xl border border-[#f2f4f7] card-shadow w-fit group hover:border-[#2563eb]/20 transition-soft active:scale-95"
+        >
+          <span className="text-[10px] sm:text-xs font-semibold text-[#667085] px-2">Last Synced: {lastSynced}</span>
+          <div className={`w-2 h-2 rounded-full ${isSyncing ? 'bg-blue-500' : 'bg-green-500'} animate-pulse`}></div>
+          <RefreshCw className={`w-3.5 h-3.5 text-[#667085] group-hover:text-[#2563eb] ${isSyncing ? 'animate-spin' : ''}`} />
+        </button>
       </div>
 
 
@@ -92,24 +116,29 @@ export default function Dashboard() {
               </div>
               <h3 className="font-bold text-xl mb-2 text-[#101828]">Automation Ready</h3>
               <p className="text-sm text-[#667085] mb-6 px-4">You have {kpis.overdueInvoicesCount} invoices overdue. Auto-reminders could save you 4 hours this week.</p>
-              <button className="px-6 py-2.5 bg-[#101828] text-white rounded-xl font-bold transition-soft hover:bg-black">
+              <Link href="/automation" className="px-6 py-2.5 bg-[#101828] text-white rounded-xl font-bold transition-soft hover:bg-black">
                 Enable Smart Reminders
-              </button>
+              </Link>
             </section>
 
             <section className="bg-white rounded-2xl p-6 border border-[#f2f4f7] card-shadow">
               <h3 className="font-bold text-lg text-[#101828] mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                {['Create Invoice', 'Add Expense', 'Run Report'].map((action) => (
-                  <button key={action} className="w-full flex items-center justify-between p-3 rounded-xl border border-[#f2f4f7] hover:bg-[#f9fafb] transition-soft group">
-                    <span className="text-sm font-medium text-[#344054]">{action}</span>
+                {[
+                  { name: 'Create Invoice', href: '/invoices' },
+                  { name: 'Run Report', href: '/reports' },
+                  { name: 'Adjust Thresholds', href: '/settings' }
+                ].map((action) => (
+                  <Link key={action.name} href={action.href} className="w-full flex items-center justify-between p-3 rounded-xl border border-[#f2f4f7] hover:bg-[#f9fafb] transition-soft group">
+                    <span className="text-sm font-medium text-[#344054]">{action.name}</span>
                     <ArrowUpRight className="w-4 h-4 text-[#98a2b3] group-hover:text-[#101828]" />
-                  </button>
+                  </Link>
                 ))}
               </div>
             </section>
           </div>
         </div>
+
 
         <div className="lg:col-span-1">
           <AlertsPanel alerts={alerts} />

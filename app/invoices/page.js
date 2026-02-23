@@ -6,10 +6,34 @@ import { calculateDaysOverdue, getRiskLevel, formatCurrency } from '@/lib/calcul
 import { Search, Filter, Mail, MoreVertical, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
 export default function InvoicesPage() {
+    const [invoices, setInvoices] = useState(mockData.invoices);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterRisk, setFilterRisk] = useState('All');
+    const [showCreateForm, setShowCreateForm] = useState(false);
 
-    const filteredInvoices = mockData.invoices.filter(invoice => {
+    // New Invoice Form State
+    const [newClient, setNewClient] = useState('');
+    const [newAmount, setNewAmount] = useState('');
+    const [newDueDate, setNewDueDate] = useState('');
+
+    const handleCreateInvoice = (e) => {
+        e.preventDefault();
+        const newInvoice = {
+            id: `INV-${Date.now().toString().slice(-4)}`,
+            client: newClient,
+            amount: parseFloat(newAmount),
+            dueDate: newDueDate,
+            status: 'Pending'
+        };
+        setInvoices([newInvoice, ...invoices]);
+        setShowCreateForm(false);
+        // Reset form
+        setNewClient('');
+        setNewAmount('');
+        setNewDueDate('');
+    };
+
+    const filteredInvoices = invoices.filter(invoice => {
         const matchesSearch = invoice.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
             invoice.id.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -27,11 +51,57 @@ export default function InvoicesPage() {
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">Invoices</h1>
                     <p className="text-[#667085] mt-1 text-sm sm:text-base">Manage and track your accounts receivable</p>
                 </div>
-                <button className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm w-fit">
-                    Create New Invoice
+                <button
+                    onClick={() => setShowCreateForm(!showCreateForm)}
+                    className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm w-fit"
+                >
+                    {showCreateForm ? 'Close Form' : 'Create New Invoice'}
                 </button>
             </div>
 
+            {/* Simple Create Invoice Form */}
+            {showCreateForm && (
+                <div className="bg-white rounded-2xl border border-[#f2f4f7] p-6 card-shadow animate-in slide-in-from-top-4 duration-300">
+                    <h2 className="text-lg font-bold text-[#101828] mb-4">New Invoice</h2>
+                    <form onSubmit={handleCreateInvoice} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-[#667085] uppercase">Client Name</label>
+                            <input
+                                required
+                                type="text"
+                                value={newClient}
+                                onChange={(e) => setNewClient(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-[#d0d5dd] rounded-lg text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none"
+                                placeholder="Acme Corp"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-[#667085] uppercase">Amount ($)</label>
+                            <input
+                                required
+                                type="number"
+                                value={newAmount}
+                                onChange={(e) => setNewAmount(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-[#d0d5dd] rounded-lg text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none"
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-[#667085] uppercase">Due Date</label>
+                            <input
+                                required
+                                type="date"
+                                value={newDueDate}
+                                onChange={(e) => setNewDueDate(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-[#d0d5dd] rounded-lg text-sm focus:ring-2 focus:ring-[#f2f4f7] outline-none"
+                            />
+                        </div>
+                        <button type="submit" className="bg-[#2563eb] text-white h-10 px-6 rounded-lg font-bold hover:bg-blue-700 transition-soft text-sm">
+                            Add Invoice
+                        </button>
+                    </form>
+                </div>
+            )}
 
             <div className="bg-white rounded-2xl border border-[#f2f4f7] card-shadow overflow-hidden">
                 {/* Table Controls */}
@@ -109,6 +179,7 @@ export default function InvoicesPage() {
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-1">
                                                 <button
+                                                    onClick={() => alert(`Sending reminder to ${invoice.client}...`)}
                                                     className="p-2 text-[#667085] hover:text-[#2563eb] hover:bg-[#eff6ff] rounded-lg transition-soft"
                                                     title="Send Email Reminder"
                                                 >
@@ -136,7 +207,7 @@ export default function InvoicesPage() {
                 {/* Pagination */}
                 <div className="px-6 py-4 border-t border-[#f2f4f7] flex items-center justify-between">
                     <p className="text-xs text-[#667085] font-medium">
-                        Showing <span className="text-[#101828] font-bold">{filteredInvoices.length}</span> of <span className="text-[#101828] font-bold">{mockData.invoices.length}</span> invoices
+                        Showing <span className="text-[#101828] font-bold">{filteredInvoices.length}</span> of <span className="text-[#101828] font-bold">{invoices.length}</span> invoices
                     </p>
                     <div className="flex items-center gap-2">
                         <button className="p-2 border border-[#d0d5dd] rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-soft hover:bg-[#f9fafb]" disabled>
