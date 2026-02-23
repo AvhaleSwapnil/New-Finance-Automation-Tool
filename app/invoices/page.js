@@ -21,16 +21,17 @@ export default function InvoicesPage() {
     });
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
+        <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-[#101828]">Invoices</h1>
-                    <p className="text-[#667085] mt-1">Manage and track your accounts receivable</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">Invoices</h1>
+                    <p className="text-[#667085] mt-1 text-sm sm:text-base">Manage and track your accounts receivable</p>
                 </div>
-                <button className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm">
+                <button className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm w-fit">
                     Create New Invoice
                 </button>
             </div>
+
 
             <div className="bg-white rounded-2xl border border-[#f2f4f7] card-shadow overflow-hidden">
                 {/* Table Controls */}

@@ -9,20 +9,21 @@ export default function AutomationPage() {
     const [showForm, setShowForm] = useState(false);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
+        <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-[#101828]">Smart Automation</h1>
-                    <p className="text-[#667085] mt-1">Configure IF-THEN rules for your QuickBooks data</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">Smart Automation</h1>
+                    <p className="text-[#667085] mt-1 text-sm sm:text-base">Configure IF-THEN rules for your QuickBooks data</p>
                 </div>
                 <button
                     onClick={() => setShowForm(!showForm)}
-                    className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm flex items-center gap-2"
+                    className="bg-[#101828] text-white px-6 py-2.5 rounded-xl font-bold transition-soft hover:bg-black text-sm flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                     <Plus className="w-4 h-4" />
                     Create New Rule
                 </button>
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Rule Builder Form */}
@@ -97,28 +98,30 @@ export default function AutomationPage() {
                         {rules.map((rule) => (
                             <div
                                 key={rule.id}
-                                className="bg-white rounded-xl p-4 border border-[#f2f4f7] card-shadow flex items-center justify-between gap-4 group hover:border-[#2563eb]/20 transition-soft"
+                                className="bg-white rounded-xl p-4 border border-[#f2f4f7] card-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:border-[#2563eb]/20 transition-soft"
                             >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-[#f9fafb] border border-[#f2f4f7] rounded-lg flex items-center justify-center">
+                                <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                                    <div className="w-10 h-10 bg-[#f9fafb] border border-[#f2f4f7] rounded-lg flex items-center justify-center flex-shrink-0">
                                         {rule.name.includes('Reminder') ? <Mail className="w-5 h-5 text-[#2563eb]" /> :
                                             rule.name.includes('Late') ? <Clock className="w-5 h-5 text-[#d97706]" /> :
                                                 <Zap className="w-5 h-5 text-[#4f46e5]" />}
                                     </div>
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-0.5">
-                                            <h4 className="font-bold text-sm text-[#101828]">{rule.name}</h4>
-                                            <span className="text-[10px] px-2 py-0.5 bg-[#ecfdf5] text-[#059669] rounded-full font-bold uppercase">Active</span>
+                                    <div className="min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                                            <h4 className="font-bold text-sm text-[#101828] truncate">{rule.name}</h4>
+                                            <span className="text-[10px] px-2 py-0.5 bg-[#ecfdf5] text-[#059669] rounded-full font-bold uppercase whitespace-nowrap">Active</span>
                                         </div>
-                                        <p className="text-xs text-[#667085]">
+                                        <p className="text-xs text-[#667085] leading-relaxed">
                                             <span className="font-semibold uppercase text-[10px]">If:</span> {rule.condition}
-                                            <span className="mx-2 text-[#d0d5dd]">|</span>
+                                            <span className="mx-2 text-[#d0d5dd] hidden sm:inline">|</span>
+                                            <br className="sm:hidden" />
                                             <span className="font-semibold uppercase text-[10px]">Then:</span> {rule.action}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-soft">
+                                <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-soft ml-auto sm:ml-0">
+
                                     <button className="p-2 text-[#667085] hover:text-[#101828] hover:bg-[#f9fafb] rounded-lg">
                                         <Pause className="w-4 h-4" />
                                     </button>

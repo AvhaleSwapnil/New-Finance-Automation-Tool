@@ -21,17 +21,18 @@ export default function Dashboard() {
   const profitChange = ((netProfit - (kpis.lastMonthRevenue - kpis.lastMonthExpenses)) / (kpis.lastMonthRevenue - kpis.lastMonthExpenses)) * 100;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#101828]">Financial Overview</h1>
-          <p className="text-[#667085] mt-1">Real-time performance metrics from QuickBooks</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">Financial Overview</h1>
+          <p className="text-[#667085] mt-1 text-sm sm:text-base">Real-time performance metrics from QuickBooks</p>
         </div>
-        <div className="flex items-center gap-3 bg-white p-2 rounded-xl border border-[#f2f4f7] card-shadow">
-          <span className="text-xs font-semibold text-[#667085] px-2">Last Synced: Today, 10:00 AM</span>
+        <div className="flex items-center gap-3 bg-white p-2 sm:p-2 rounded-xl border border-[#f2f4f7] card-shadow w-fit">
+          <span className="text-[10px] sm:text-xs font-semibold text-[#667085] px-2">Last Synced: Today, 10:00 AM</span>
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
         </div>
       </div>
+
 
       {/* KPI Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

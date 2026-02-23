@@ -9,24 +9,25 @@ export default function ReportsPage() {
     const netProfit = calculateNetProfit(kpis.totalRevenue, kpis.totalExpenses);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
+        <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-[#101828]">Financial Reports</h1>
-                    <p className="text-[#667085] mt-1">Deep dive into your business performance</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">Financial Reports</h1>
+                    <p className="text-[#667085] mt-1 text-sm sm:text-base">Deep dive into your business performance</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#f2f4f7] rounded-xl font-bold text-sm text-[#344054] transition-soft hover:bg-[#f9fafb]">
+                    <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white border border-[#f2f4f7] rounded-xl font-bold text-xs sm:text-sm text-[#344054] transition-soft hover:bg-[#f9fafb]">
                         <Calendar className="w-4 h-4 text-[#667085]" />
                         Feb 2026
                         <ChevronDown className="w-4 h-4 text-[#667085]" />
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#101828] text-white rounded-xl font-bold text-sm transition-soft hover:bg-black">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-[#101828] text-white rounded-xl font-bold text-xs sm:text-sm transition-soft hover:bg-black">
                         <FileDown className="w-4 h-4" />
                         Export PDF
                     </button>
                 </div>
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <ReportSummaryCard title="Monthly Revenue" value={formatCurrency(kpis.totalRevenue)} icon={TrendingUp} color="blue" />
